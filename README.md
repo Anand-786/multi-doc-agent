@@ -1,4 +1,4 @@
-# gem5 Code Assistant
+# gem5 Expert Agent
 
 An **AI agent** to help anyone in understanding and navigating the **gem5** simulator codebase using natural language.
 
