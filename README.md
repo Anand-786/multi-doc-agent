@@ -1,64 +1,31 @@
-# gem5 Expert Agent
+# gem5 Documentation Q&A Agent
 
-An **AI agent** to help anyone in understanding and navigating the **gem5** simulator codebase using natural language.
+A simple tool to help developers and researchers find answers from the extensive gem5 documentation using natural language.
 
----
+## The Problem
 
-### Motivation
+The gem5 simulator is a powerful and complex tool with comprehensive documentation. However, navigating through hundreds of pages to find a specific piece of information can be time-consuming and difficult, especially for newcomers.
 
-The gem5 simulator is essential for computer architecture research, but its large C++ codebase presents a significant barrier. Finding specific implementations or understanding the flow between different components requires extensive manual effort. This project aims to solve that problem by providing an intelligent agent that can answer questions about the code directly.
+## The Solution
 
-### Core Functionality
+This project aims to solve that problem by providing an intelligent Q&A agent. It works by:
 
-* **Structural Code Parsing:** Instead of treating code as plain text, this agent uses Abstract Syntax Trees (ASTs) to parse the C++ source. This provides a deep, structural understanding of functions, classes, and their relationships.
-* **Intelligent Code Retrieval:** It uses a vector database and semantic search or RAG (Retrieval-Augmented Generation) to find the most relevant code snippets for a user's question.
-* **Natural Language Answers:** Leverages a Large Language Model (Google's Gemini) to synthesize the retrieved technical information into a clear, easy-to-understand answer.
+1.  **Scraping:** Systematically crawling and parsing the official gem5 documentation website.
+2.  **Chunking & Storing:** Breaking the content down into meaningful, semantically-aware chunks and storing them as vector embeddings in a database.
+3.  **Retrieval & Generation:** When a user asks a question, the agent retrieves the most relevant chunks of documentation from the database and uses a Large Language Model (LLM) to synthesize a clear, concise answer based on that context.
 
-### System Architecture
+This approach is known as Retrieval-Augmented Generation (RAG).
 
-The agent processes a user's question in a few steps.
+## Current Status
 
-1.  First, the user's question is converted into a numerical vector representation.
-2.  This vector is used to search a pre-processed database of the gem5 codebase to find the most relevant code snippets. This database is built beforehand by parsing the entire codebase using ASTs and storing each function/class as a vector.
-3.  Finally, these relevant code snippets and the original question are sent to the Gemini LLM, which generates a comprehensive, human-readable answer.
+This project is currently under development. The core pipeline for scraping and basic Q&A is being built.
 
-### Technology Stack
+## Future Work
 
-* **Backend:** Python
-* **AI/ML:** Google Generative AI (Gemini), SentenceTransformers, ChromaDB
-* **Code Parsing:** Clang (libclang)
+- [ ] Implement an intent-routing model to handle different types of queries more effectively.
+- [ ] Build a simple, user-friendly interface using Streamlit.
+- [ ] Experiment with different chunking strategies and embedding models to improve answer quality.
 
-### Setup and Usage
+## Getting Started
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/YOUR_REPONAME.git](https://github.com/YOUR_USERNAME/YOUR_REPONAME.git)
-    cd YOUR_REPONAME
-    ```
-
-2.  **Create and activate a virtual environment:**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate
-    ```
-
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4.  **Set up API Key:**
-    * Create a `.env` file in the project root.
-    * Add your API key to the file: `GOOGLE_API_KEY="YOUR_API_KEY_HERE"`
-
-5.  **Build the Database:**
-    * Place the gem5 codebase into the `data/` directory.
-    * Run the ingestion script:
-    ```bash
-    python src/ingest.py
-    ```
-
-6.  **Run the Agent:**
-    ```bash
-    python src/agent.py
-    ```
+*(Instructions on how to set up and run the project will be added here soon.)*
