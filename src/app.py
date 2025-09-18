@@ -5,6 +5,28 @@ import chromadb
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
 
+PROMPT_TEMPLATE = """
+You are a helpful and precise expert on the gem5 computer architecture simulator.
+
+A user has asked the following question:
+"{user_query}"
+
+Here are the most relevant sections from the gem5 documentation. Each block includes the source URL, page title, and heading.
+
+---CONTEXT---
+{context_string}
+---END CONTEXT---
+
+Your tasks are:
+1.  Carefully read the context provided.
+2.  Formulate a clear and concise answer to the user's question, using **ONLY** the information found in the context blocks. Do not use any prior knowledge.
+3.  After the answer, create a markdown heading titled "Sources".
+4.  Under the "Sources" heading, create a bulleted list of the documents you used. For each source, you **MUST** format it exactly as follows, using the metadata from the context block:
+    * **From:** Page Title - Full Heading [Source URL]
+
+If the information in the context is not sufficient to answer the question, simply state: "I could not find a definitive answer in the provided documentation."
+"""
+
 # --- Load environment variables from .env file ---
 load_dotenv()
 
@@ -66,60 +88,55 @@ if prompt := st.chat_input("What is the Ruby memory system?"):
 
         # --- Agent's Thinking Process ---
         with st.spinner("Thinking..."):
-            # 1. Embed the user's query
-            query_embedding = embedding_model.encode(prompt).tolist()
-
-            # 2. Query the database
+            # 1. Query the database using the user's prompt directly
             results = collection.query(
-                query_embeddings=[query_embedding],
-                n_results=3,
+                query_texts=[prompt],
+                n_results=5, # Using 5 results gives the model more context
                 include=['documents', 'metadatas']
             )
-            
-            retrieved_docs = results['documents'][0]
-            retrieved_metadatas = results['metadatas'][0]
-            
-            # 3. Construct the prompt for the LLM
-            context_string = ""
-            sources_string = ""
-            source_links = set() # Use a set to store unique links
 
-            for i, meta in enumerate(retrieved_metadatas):
-                context_string += f"--- Context {i+1} ---\n{retrieved_docs[i]}\n\n"
-                # Add unique source links to the set
-                source_links.add(f"[{meta.get('page_title', 'Unknown Title')}]({meta.get('source_url', '#')})")
-            
-            # Create a clean, bulleted list of sources
-            sources_string = "\n".join(f"- {link}" for link in source_links)
+            retrieved_docs = results.get('documents', [[]])[0]
+            retrieved_metadatas = results.get('metadatas', [[]])[0]
 
-            final_prompt = f"""
-            You are an expert assistant for the gem5 computer architecture simulator.
-            A user has asked the following question: "{prompt}"
+            # Handle case where no documents are found
+            if not retrieved_docs:
+                final_response = "I'm sorry, I couldn't find any relevant information in the documentation to answer your question."
+            else:
+                # 2. CRITICAL: Build the context string WITH all the source metadata
+                context_blocks = []
+                for i, (doc, meta) in enumerate(zip(retrieved_docs, retrieved_metadatas)):
+                    page_title = meta.get('page_title', 'N/A')
+                    source_url = meta.get('source_url', 'N/A')
+                    # This assumes your chunker provides these keys
+                    parent_section = meta.get('parent_section', '') 
+                    section_heading = meta.get('section_heading', '')
+                    full_heading = f"{parent_section} - {section_heading}".strip(" -")
+                    
+                    context_block = f"""--- START OF CONTEXT BLOCK {i+1} ---
+            Source URL: {source_url}
+            Page Title: {page_title}
+            Full Heading: {full_heading}
 
-            Here is the most relevant context from the documentation:
-            ---CONTEXT---
-            {context_string}
-            ---END CONTEXT---
+            Content:
+            {doc}
+            --- END OF CONTEXT BLOCK {i+1} ---"""
+                    context_blocks.append(context_block)
+                
+                context_string = "\n\n".join(context_blocks)
 
-            Your task is to provide a clear and concise answer to the user's question based ONLY on the provided context.
-            After your answer, you MUST provide a detailed list of the sources you used. Format them under a "Sources:" heading.
-            For each source, list it on a new line. Include the 'Page Title' and the 'Section Heading'. After the text, include the full URL in square brackets.
-            
-            Example Format:
-            - From: Page Title - Section Heading [https://www.gem5.org/...]
+                # 3. Format the final prompt using the new template
+                final_prompt = PROMPT_TEMPLATE.format(
+                    user_query=prompt,
+                    context_string=context_string
+                )
 
-            If the context is insufficient, state that you cannot answer based on the provided documentation.
-            """
+                # 4. Generate the response. The LLM will now create the answer AND the sources.
+                response = llm.generate_content(final_prompt)
+                final_response = response.text # The final response is just the model's text
 
-            # 4. Generate and display the response
-            response = llm.generate_content(final_prompt)
-            answer = response.text
-            
-            # Combine the answer and sources for display
-            final_response = f"{answer}\n\n---\n**Sources:**\n{sources_string}"
-
+            # Display the assistant's response
             with st.chat_message("assistant"):
                 st.markdown(final_response)
-            
+
             # Add assistant response to chat history
             st.session_state.messages.append({"role": "assistant", "content": final_response})
