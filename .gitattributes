@@ -1,0 +1,2 @@
+*.joblib filter=lfs diff=lfs merge=lfs -text
+gem5_chroma_db_v3/**/* filter=lfs diff=lfs merge=lfs -text
