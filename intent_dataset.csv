@@ -1,0 +1,111 @@
+query,intent
+"Hello there!",casual
+"Hey, how are you?",casual
+"What's up?",casual
+"Can you tell me a joke?",casual
+"What is your purpose?",casual
+"Thanks for the help",casual
+"Good morning",casual
+"That was useful, thanks",casual
+"Who created you?",casual
+"What other things can you do?",casual
+"See you later",casual
+"That's all for now",casual
+"How's the weather?",casual
+"Cool, I got it.",casual
+"You're a bot, right?",casual
+"Can you help me with my homework?",casual
+"Awesome!",casual
+"Goodbye",casual
+"I have a question",casual
+"Let's chat",casual
+"Hey there, can you help me?",casual
+"What is a Large Language Model?",casual
+"Explain how the RAG pattern works.",casual
+"What is a transformer architecture?",casual
+"Can you explain Dijkstra's algorithm?",casual
+"Good morning!",casual
+"What is a neural network?",casual
+"How does a Convolutional Neural Network work for images?",casual
+"Tell me about the quicksort algorithm.",casual
+"What's a hash table?",casual
+"Thanks, that was very helpful.",casual
+"What is the capital of India?",casual
+"Who are you?",casual
+"Can you write a Python function to reverse a string?",casual
+"That's incorrect.",casual
+"What is an agentic AI system?",casual
+"Okay, I understand.",casual
+"What are you capable of?",casual
+"How do you calculate a factorial?",casual
+"Explain the concept of recursion.",casual
+"What is object-oriented programming?",casual
+"That's all, thank you.",casual
+"What is a linked list data structure?",casual
+"Can you explain what an API is?",casual
+"Tell me about binary search.",casual
+"What is gradient descent?",casual
+"I have a general programming question.",casual
+"What's the time?",casual
+"Tell me a fun fact about computers.",casual
+"Explain the difference between supervised and unsupervised learning.",casual
+"What is a vector database?",casual
+"Who won the last FIFA World Cup?",casual
+"What is Moore's Law?",casual
+"Bye!",casual
+"How can I help improve your responses?",casual
+"How do I set up a two-level cache system in gem5?",doc_qna
+"Explain the difference between MinorCPU and O3CPU.",doc_qna
+"Where in the documentation can I find the classic memory system?",doc_qna
+"What are the command line flags for running a simulation?",doc_qna
+"How to connect a network interface to a switch?",doc_qna
+"Can you show me an example of a simple SE mode script?",doc_qna
+"What is the purpose of the m5 utility?",doc_qna
+"How do I get simulation statistics for cache misses?",doc_qna
+"What is the MESI Two Level coherence protocol?",doc_qna
+"Where are the configuration scripts located?",doc_qna
+"Tell me about the gem5 standard library.",doc_qna
+"How can I change the CPU clock frequency?",doc_qna
+"What does FS mode mean in gem5?",doc_qna
+"Describe the components of the Ruby memory system.",doc_qna
+"How do I compile gem5 for the ARM architecture?",doc_qna
+"Where can I find information on SimObjects?",doc_qna
+"Explain how to use checkpointing.",doc_qna
+"What is KVM CPU in gem5?",doc_qna
+"How do I add a new system call in FS mode?",doc_qna
+"What are the different CPU models available?",doc_qna
+"What is a cache memory?",doc_qna
+"How do you build gem5 from source?",doc_qna
+"How do I read the stats.txt file in gem5?",doc_qna
+"What are the prerequisites for installing gem5 on Ubuntu?",doc_qna
+"Explain the different CPU models in gem5.",doc_qna
+"How can I run a full-system simulation of ARM?",doc_qna
+"Show me the command to run a basic hello world simulation.",doc_qna
+"What is a SimObject in the context of gem5?",doc_qna
+"How do I change the memory size in my simulation script?",doc_qna
+"Where can I find documentation on the Ruby memory model?",doc_qna
+"Tell me about the gem5 standard library components.",doc_qna
+"What is the difference between SE mode and FS mode?",doc_qna
+"How can I take a simulation checkpoint?",doc_qna
+"Where are the default configuration scripts?",doc_qna
+"How do I enable debug flags for the cache?",doc_qna
+"Explain the structure of the gem5 output directory.",doc_qna
+"What is the purpose of the `scons` build system?",doc_qna
+"How to model a simple L1 and L2 cache hierarchy?",doc_qna
+"Can gem5 simulate GPUs?",doc_qna
+"Tell me about the DerivO3CPU model.",doc_qna
+"How do I interpret the cache miss rate from the stats file?",doc_qna
+"What is the role of `m5.instantiate()` in a script?",doc_qna
+"How do I connect a CPU to the system memory bus?",doc_qna
+"Where can I find examples of full system configuration scripts?",doc_qna
+"What version of Python is recommended for gem5?",doc_qna
+"How to simulate a simple traffic generator?",doc_qna
+"What are SLICC and the Ruby protocol?",doc_qna
+"How can I add a new device model to gem5?",doc_qna
+"What is a system call emulation (SE) mode?",doc_qna
+"Explain the basics of the classic memory system.",doc_qna
+"How do I run gem5 with multiple threads?",doc_qna
+"What is the gem5 mailing list for?",doc_qna
+"Can you explain what a victim cache does?",doc_qna
+"How do I trace memory requests in a simulation?",doc_qna
+"What are some common build errors when compiling gem5?",doc_qna
