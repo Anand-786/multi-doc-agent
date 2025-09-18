@@ -1,31 +1,87 @@
-# gem5 Documentation Q&A Agent
+# Gem5 Documentation Agent
 
-A simple tool to help developers and researchers find answers from the extensive gem5 documentation using natural language.
+An agent that uses Retrieval-Augmented Generation (RAG) to answer questions about the gem5 computer architecture simulator. It uses a vector database to find relevant information from the official gem5 documentation before generating an answer.
 
-## The Problem
+**Deployment** : [gem5-doc-agent](https://gem5-doc-agent.streamlit.app/)
 
-The gem5 simulator is a powerful and complex tool with comprehensive documentation. However, navigating through hundreds of pages to find a specific piece of information can be time-consuming and difficult, especially for newcomers.
+---
 
-## The Solution
+## Features
 
-This project aims to solve that problem by providing an intelligent Q&A agent. It works by:
+- **Intent Classification:** A simple classifier determines if a question is about gem5 or a general topic. This acts as the agent's primary decision-making step.
+- **RAG for Technical Questions:** For gem5-related queries, the agent uses its RAG tool, retrieving relevant text from a ChromaDB vector database to provide context to the language model.
+- **General Q&A:** For casual or off-topic questions, the agent queries the language model directly, using its general knowledge.
+- **Simple Chat Interface:** A basic user interface built with Streamlit.
 
-1.  **Scraping:** Systematically crawling and parsing the official gem5 documentation website.
-2.  **Chunking & Storing:** Breaking the content down into meaningful, semantically-aware chunks and storing them as vector embeddings in a database.
-3.  **Retrieval & Generation:** When a user asks a question, the agent retrieves the most relevant chunks of documentation from the database and uses a Large Language Model (LLM) to synthesize a clear, concise answer based on that context.
+---
+## Application Workflow
 
-This approach is known as Retrieval-Augmented Generation (RAG).
+When a user submits a query, the agent follows a specific sequence of steps:
 
-## Current Status
+1.  **Intent Classification:** The raw query is first passed to a trained Logistic Regression model. This classifier determines if the query is `doc_qna` (related to gem5) or `casual` (a general question).
+2.  **Conditional Routing:** The application logic then branches based on the classified intent.
+    -   **If the intent is `casual`**, the query is sent directly to the Gemini LLM. The model answers using its general knowledge, and the process ends here.
+    -   **If the intent is `doc_qna`**, the RAG pipeline is triggered.
+3.  **Retrieval (RAG):** The user's query is converted into a vector embedding and used to search the ChromaDB database. The top 5 most similar text chunks from the gem5 documentation are retrieved.
+4.  **Generation (RAG):** The retrieved text chunks are combined with the original query into a detailed prompt. This is sent to the Gemini LLM, which is instructed to formulate an answer based only on the provided context.
+5.  **Display:** The final response from either path is displayed in the chat interface.
 
-This project is currently under development. The core pipeline for scraping and basic Q&A is being built.
+---
 
-## Future Work
+## Tech Stack
 
-- [ ] Implement an intent-routing model to handle different types of queries more effectively.
-- [ ] Build a simple, user-friendly interface using Streamlit.
-- [ ] Experiment with different chunking strategies and embedding models to improve answer quality.
+- **Intent Classifier:** Scikit-learn (Logistic Regression)
+- **Embedding Model:** `sentence-transformers/all-MiniLM-L6-v2`
+- **LLM:** Google Gemini 2.5 Flash
+- **Vector Database:** ChromaDB
+- **Frontend:** Streamlit
 
-## Getting Started
+---
 
-*(Instructions on how to set up and run the project will be added here soon.)*
+## Setup and Local Installation
+
+To run this application on your local machine, follow these steps.
+
+1.  **Clone the Repository**
+    ```bash
+    git clone [https://github.com/Anand-786/gem5-doc-agent.git](https://github.com/Anand-786/gem5-doc-agent.git)
+    cd gem5-doc-agent
+    ```
+
+2.  **Create and Activate a Virtual Environment**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate`
+    ```
+
+3.  **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Set Up Environment Variables**
+    Create a file named `.env` in the project's root directory and add your Google API key:
+    ```
+    GOOGLE_API_KEY="your_api_key"
+    ```
+
+5.  **Run the Application**
+    ```bash
+    streamlit run src/app.py
+    ```
+
+---
+
+## Project Components
+
+- `app.py`: The main Streamlit application.
+- `train_router.py`: Script to train the intent classification model.
+- `intent_dataset.csv`: The data used to train the intent classifier.
+- `gem5_chroma_db_v3/`: The ChromaDB vector store containing the documentation embeddings.
+- `requirements.txt`: Python package dependencies.
+
+---
+
+## Screenshot
+
+![Gem5 Agent Screenshot](assets/screenshot.png)
