@@ -2,7 +2,7 @@
 
 An agent that uses Retrieval-Augmented Generation (RAG) to answer questions about the gem5 computer architecture simulator. It uses a vector database to find relevant information from the official gem5 documentation before generating an answer.
 
-**Deployment** : [gem5-doc-agent](https://gem5-doc-agent.streamlit.app/)
+**Deployment** : [Gem5 Documentation Agent](https://gem5-doc-agent.streamlit.app/)
 
 ---
 
@@ -84,4 +84,4 @@ To run this application on your local machine, follow these steps.
 
 ## Screenshot
 
-![Gem5 Agent Screenshot](assets/screenshot.png)
+![Gem5 Agent Screenshot](Screenshot.png)
