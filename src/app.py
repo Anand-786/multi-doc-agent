@@ -58,7 +58,7 @@ def load_resources():
     try:
         GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
         genai.configure(api_key=GOOGLE_API_KEY)
-        llm = genai.GenerativeModel('gemini-1.5-flash-latest')
+        llm = genai.GenerativeModel('gemini-2.5-flash')
     except KeyError:
         st.error("🚨 GOOGLE_API_KEY not found. Please set it in your .env file.")
         return None, None, None, None, None # Return None for all 5 resources
