@@ -17,5 +17,4 @@ data/
 .streamlit/ 
 gem5_chroma_db/ 
 gem5_chroma_db_v2/ 
-gem5_chroma_db_v3/
 src_testing_code_parsing/
