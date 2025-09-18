@@ -88,7 +88,7 @@ if prompt := st.chat_input("What is the Ruby memory system?"):
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         intent = classify_intent(prompt, embedding_model, intent_classifier, label_encoder)
-        st.toast(f"Intent classified as: **{intent}**", icon="🧠")
+        st.toast(f"Intent classified as: **{intent}**", icon=">")
         
         final_response = ""
 
