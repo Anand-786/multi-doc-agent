@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import chromadb
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
+import joblib
 
 PROMPT_TEMPLATE = """
 You are a helpful and precise expert on the gem5 computer architecture simulator.
@@ -45,6 +46,10 @@ def load_resources():
     # Initialize the embedding model
     embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
     
+    # --- NEW: Load the intent classifier and label encoder ---
+    intent_classifier = joblib.load('intent_classifier.joblib')
+    label_encoder = joblib.load('label_encoder.joblib')
+    
     # Initialize the ChromaDB client
     client = chromadb.PersistentClient(path="gem5_chroma_db_v3")
     collection = client.get_collection(name="gem5_documentation_v3")
@@ -56,12 +61,21 @@ def load_resources():
         llm = genai.GenerativeModel('gemini-1.5-flash-latest')
     except KeyError:
         st.error("🚨 GOOGLE_API_KEY not found. Please set it in your .env file.")
-        return None, None, None
+        return None, None, None, None, None # Return None for all 5 resources
         
     print("✅ Resources initialized.")
-    return embedding_model, collection, llm
+    # --- NEW: Return all 5 resources ---
+    return embedding_model, collection, llm, intent_classifier, label_encoder
 
-embedding_model, collection, llm = load_resources()
+# --- NEW: Unpack all 5 resources ---
+embedding_model, collection, llm, intent_classifier, label_encoder = load_resources()
+
+def classify_intent(query, emb_model, classifier, encoder):
+    """Classifies a query using the loaded models."""
+    query_embedding = emb_model.encode([query])
+    prediction = classifier.predict(query_embedding)
+    intent = encoder.inverse_transform(prediction)
+    return intent[0]
 
 # --- Main App Logic ---
 st.title("Gem5 Documentation Agent")
@@ -86,57 +100,68 @@ if prompt := st.chat_input("What is the Ruby memory system?"):
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        # --- Agent's Thinking Process ---
-        with st.spinner("Thinking..."):
-            # 1. Query the database using the user's prompt directly
-            results = collection.query(
-                query_texts=[prompt],
-                n_results=5, # Using 5 results gives the model more context
-                include=['documents', 'metadatas']
-            )
+        # --- NEW: Classify the intent first! ---
+        intent = classify_intent(prompt, embedding_model, intent_classifier, label_encoder)
+        st.toast(f"Intent classified as: **{intent}**", icon="🧠")
+        
+        final_response = ""
 
-            retrieved_docs = results.get('documents', [[]])[0]
-            retrieved_metadatas = results.get('metadatas', [[]])[0]
-
-            # Handle case where no documents are found
-            if not retrieved_docs:
-                final_response = "I'm sorry, I couldn't find any relevant information in the documentation to answer your question."
-            else:
-                # 2. CRITICAL: Build the context string WITH all the source metadata
-                context_blocks = []
-                for i, (doc, meta) in enumerate(zip(retrieved_docs, retrieved_metadatas)):
-                    page_title = meta.get('page_title', 'N/A')
-                    source_url = meta.get('source_url', 'N/A')
-                    # This assumes your chunker provides these keys
-                    parent_section = meta.get('parent_section', '') 
-                    section_heading = meta.get('section_heading', '')
-                    full_heading = f"{parent_section} - {section_heading}".strip(" -")
-                    
-                    context_block = f"""--- START OF CONTEXT BLOCK {i+1} ---
-            Source URL: {source_url}
-            Page Title: {page_title}
-            Full Heading: {full_heading}
-
-            Content:
-            {doc}
-            --- END OF CONTEXT BLOCK {i+1} ---"""
-                    context_blocks.append(context_block)
-                
-                context_string = "\n\n".join(context_blocks)
-
-                # 3. Format the final prompt using the new template
-                final_prompt = PROMPT_TEMPLATE.format(
-                    user_query=prompt,
-                    context_string=context_string
+        # --- NEW: Conditional logic based on intent ---
+        if intent == 'doc_qna':
+            # --- Agent's Thinking Process (for doc_qna) ---
+            with st.spinner("Searching documentation..."):
+                # 1. Query the database using the user's prompt directly
+                results = collection.query(
+                    query_texts=[prompt],
+                    n_results=5,
+                    include=['documents', 'metadatas']
                 )
 
-                # 4. Generate the response. The LLM will now create the answer AND the sources.
-                response = llm.generate_content(final_prompt)
-                final_response = response.text # The final response is just the model's text
+                retrieved_docs = results.get('documents', [[]])[0]
+                retrieved_metadatas = results.get('metadatas', [[]])[0]
 
-            # Display the assistant's response
-            with st.chat_message("assistant"):
-                st.markdown(final_response)
+                if not retrieved_docs:
+                    final_response = "I'm sorry, I couldn't find any relevant information in the documentation to answer your question."
+                else:
+                    # 2. Build the context string
+                    context_blocks = []
+                    for i, (doc, meta) in enumerate(zip(retrieved_docs, retrieved_metadatas)):
+                        page_title = meta.get('page_title', 'N/A')
+                        source_url = meta.get('source_url', 'N/A')
+                        parent_section = meta.get('parent_section', '') 
+                        section_heading = meta.get('section_heading', '')
+                        full_heading = f"{parent_section} - {section_heading}".strip(" -")
+                        
+                        context_block = f"""--- START OF CONTEXT BLOCK {i+1} ---
+                Source URL: {source_url}
+                Page Title: {page_title}
+                Full Heading: {full_heading}
 
-            # Add assistant response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": final_response})
+                Content:
+                {doc}
+                --- END OF CONTEXT BLOCK {i+1} ---"""
+                        context_blocks.append(context_block)
+                    
+                    context_string = "\n\n".join(context_blocks)
+
+                    # 3. Format the final prompt
+                    final_prompt = PROMPT_TEMPLATE.format(
+                        user_query=prompt,
+                        context_string=context_string
+                    )
+
+                    # 4. Generate the response
+                    response = llm.generate_content(final_prompt)
+                    final_response = response.text
+        else: # This handles the 'casual' intent
+            with st.spinner("Thinking..."):
+                # We pass the user's prompt directly to the LLM without any extra context
+                response = llm.generate_content(prompt)
+                final_response = response.text
+
+        # Display the assistant's response
+        with st.chat_message("assistant"):
+            st.markdown(final_response)
+
+        # Add assistant response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": final_response})
