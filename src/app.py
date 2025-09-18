@@ -10,9 +10,9 @@ load_dotenv()
 
 # --- Page Configuration ---
 st.set_page_config(
-    page_title="gem5 Doc Agent",
-    page_icon="🤖",
-    layout="wide"
+    page_title="Gem5 Docs Agent",
+    page_icon="logo.png",
+    layout="centered"
 )
 
 # --- Caching Models and DB Connection ---
@@ -42,7 +42,7 @@ def load_resources():
 embedding_model, collection, llm = load_resources()
 
 # --- Main App Logic ---
-st.title("🤖 gem5 Documentation Q&A Agent")
+st.title("Gem5 Documentation Agent")
 st.caption("Ask any question about the gem5 simulator documentation.")
 
 # Initialize chat history in session state
