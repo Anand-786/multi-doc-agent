@@ -7,9 +7,9 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning, module="sentence_transformers.SentenceTransformer")
 
 # --- Configuration ---
-CHUNKS_FILE = "gem5_docs_chunks.json"
-DB_PATH = "gem5_chroma_db"
-COLLECTION_NAME = "gem5_documentation"
+CHUNKS_FILE = "gem5_docs_chunks2.json"
+DB_PATH = "gem5_chroma_db_v3"
+COLLECTION_NAME = "gem5_documentation_v3"
 MODEL_NAME = "all-MiniLM-L6-v2" # A good, fast, and popular model
 
 def main():

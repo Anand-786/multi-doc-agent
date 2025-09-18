@@ -24,8 +24,8 @@ def load_resources():
     embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
     
     # Initialize the ChromaDB client
-    client = chromadb.PersistentClient(path="gem5_chroma_db")
-    collection = client.get_collection(name="gem5_documentation")
+    client = chromadb.PersistentClient(path="gem5_chroma_db_v3")
+    collection = client.get_collection(name="gem5_documentation_v3")
     
     # Configure and initialize the Gemini model
     try:
@@ -97,10 +97,18 @@ if prompt := st.chat_input("What is the Ruby memory system?"):
             A user has asked the following question: "{prompt}"
 
             Here is the most relevant context from the documentation:
+            ---CONTEXT---
             {context_string}
+            ---END CONTEXT---
 
-            Your task is to provide a clear and concise answer based ONLY on the provided context.
-            If the context is insufficient, state that you cannot answer the question with the given information.
+            Your task is to provide a clear and concise answer to the user's question based ONLY on the provided context.
+            After your answer, you MUST provide a detailed list of the sources you used. Format them under a "Sources:" heading.
+            For each source, list it on a new line. Include the 'Page Title' and the 'Section Heading'. After the text, include the full URL in square brackets.
+            
+            Example Format:
+            - From: Page Title - Section Heading [https://www.gem5.org/...]
+
+            If the context is insufficient, state that you cannot answer based on the provided documentation.
             """
 
             # 4. Generate and display the response
