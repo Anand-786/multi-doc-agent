@@ -2,8 +2,9 @@
 
 An agent that uses Retrieval-Augmented Generation (RAG) to answer questions about the gem5 computer architecture simulator. It uses a vector database to find relevant information from the official gem5 documentation before generating an answer.
 
-### **Deployment** : [Gem5 Documentation Agent](https://gem5-doc-agent.streamlit.app/)
+#### **Deployment** : [Gem5 Documentation Agent](https://gem5-doc-agent.streamlit.app/)
 
+---
 
 ## Features
 
@@ -12,6 +13,7 @@ An agent that uses Retrieval-Augmented Generation (RAG) to answer questions abou
 - **General Q&A:** For casual or off-topic questions, the agent queries the language model directly, using its general knowledge.
 - **Simple Chat Interface:** A basic user interface built with Streamlit.
 
+---
 
 ## Application Workflow
 
@@ -25,6 +27,7 @@ When a user submits a query, the agent follows a specific sequence of steps:
 4.  **Generation (RAG):** The retrieved text chunks are combined with the original query into a detailed prompt. This is sent to the Gemini LLM, which is instructed to formulate an answer based only on the provided context.
 5.  **Display:** The final response from either path is displayed in the chat interface.
 
+---
 
 ## Tech Stack
 
@@ -34,6 +37,7 @@ When a user submits a query, the agent follows a specific sequence of steps:
 - **Vector Database:** ChromaDB
 - **Frontend:** Streamlit
 
+---
 
 ## Setup and Local Installation
 
@@ -67,6 +71,7 @@ To run this application on your local machine, follow these steps.
     streamlit run src/app.py
     ```
 
+---
 
 ## Project Components
 
@@ -76,6 +81,7 @@ To run this application on your local machine, follow these steps.
 - `gem5_chroma_db_v3/`: The ChromaDB vector store containing the documentation embeddings.
 - `requirements.txt`: Python package dependencies.
 
+---
 
 ## Screenshot
 
