@@ -260,8 +260,9 @@ st.title(" ◆ Multi-Agent Document Platform")
 ensure_encoder_exists("gem5_expert")
 
 if "messages" not in st.session_state: st.session_state.messages = {}
-if "agent_list" not in st.session_state: 
-    st.session_state.agent_list = {
+if "agent_list" not in st.session_state:
+    # Start with the special, pre-built gem5 agent
+    agent_list = {
         "gem5_expert": {
             "collection_name": "gem5_documentation_v3", 
             "paths": {
@@ -274,7 +275,25 @@ if "agent_list" not in st.session_state:
                 "sample_question": "What is the O3 CPU model?"
             }
         }
-    } 
+    }
+    # Scan the ChromaDB directory for other existing collections
+    existing_collections = db_client.list_collections()
+    for collection in existing_collections:
+        # Skip the gem5 collection since we added it manually
+        if collection.name == "gem5_documentation_v3":
+            continue
+        
+        # Assume agent_name is the same as collection_name
+        agent_name = collection.name
+        agent_list[agent_name] = {
+            "collection_name": collection.name,
+            "paths": {
+                "classifier": os.path.join(CLASSIFIER_PATH, f"{agent_name}_classifier.joblib"),
+                "encoder": os.path.join(CLASSIFIER_PATH, f"{agent_name}_encoder.joblib")
+            },
+            "metadata": {} # Metadata can be populated later if needed
+        }
+    st.session_state.agent_list = agent_list
 if "active_agent" not in st.session_state: st.session_state.active_agent = None
 if "page" not in st.session_state: st.session_state.page = "selection"
 
