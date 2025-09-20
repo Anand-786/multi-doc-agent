@@ -1,6 +1,4 @@
-# app.py - REFACTORED FOR ON-THE-FLY INTENT CLASSIFICATION (USER'S PREFERRED PIPELINE)
-
-import fitz  # PyMuPDF
+import fitz
 from langchain.text_splitter import RecursiveCharacterTextSplitter 
 import streamlit as st
 import os
@@ -8,19 +6,16 @@ from dotenv import load_dotenv
 import chromadb
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
-
-# NEW IMPORTS for local model pipeline
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder
 import joblib
 import io
-import yake # Keyword extractor
+import yake
 import random
-import time # For toast duration
+import time
 
-# --- Configuration & Templates ---
 load_dotenv()
 DB_PATH = "multi_agent_chroma_db"
 CLASSIFIER_PATH = "intent_classifiers"
@@ -47,7 +42,6 @@ Your tasks are:
 If the information in the context is not sufficient, state: "I could not find a definitive answer in the provided documentation."
 """
 
-# --- Resource Loading ---
 @st.cache_resource
 def load_resources():
     embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -65,7 +59,6 @@ def load_resources():
 
 embedding_model, db_client, llm = load_resources()
 
-# --- Auto-Migration and Verification Functions ---
 def ensure_encoder_exists(agent_name):
     encoder_path = os.path.join(CLASSIFIER_PATH, f"{agent_name}_encoder.joblib")
     if not os.path.exists(encoder_path):
@@ -76,7 +69,6 @@ def ensure_encoder_exists(agent_name):
         st.success(f"{agent_name} encoder created successfully!")
         time.sleep(2)
 
-# --- Agent Creation with Intent Classification Pipeline ---
 def create_agent_with_intent_classifier(pdf_file, collection_name, client):
     st.toast("➤ Step 1/5: Chunking document..."); time.sleep(2)
     try:
@@ -106,7 +98,6 @@ def create_agent_with_intent_classifier(pdf_file, collection_name, client):
     
     st.toast("➤ Step 3/5: Assembling dataset..."); time.sleep(2)
     df_doc = pd.DataFrame(doc_qna_questions, columns=['query']); df_doc['intent'] = 'doc_qna'
-    # Load casual questions from the external CSV file
     df_casual = pd.read_csv('casual_queries.csv')
     df_full = pd.concat([df_doc, df_casual], ignore_index=True)
     st.toast("✔ Dataset assembled!"); time.sleep(2)
@@ -137,7 +128,6 @@ def create_agent_with_intent_classifier(pdf_file, collection_name, client):
     }
     return True, agent_config
 
-# --- UI Sections ---
 def agent_selection_ui():
     st.subheader("Select an Agent")
     col1, col2, col3 = st.columns(3)
@@ -205,7 +195,6 @@ def chat_ui():
     for message in st.session_state.messages[active_agent_name]:
         with st.chat_message(message["role"]): st.markdown(message["content"])
 
-    # --- FINAL CHANGE: Display sample question only if chat history is empty ---
     is_chat_empty = not st.session_state.messages[active_agent_name]
     sample_question = agent_info.get("metadata", {}).get("sample_question")
 
@@ -237,7 +226,7 @@ def chat_ui():
             response = "I am a document-focused agent and can only answer questions about the document you provided."
             st.session_state.messages[active_agent_name].append({"role": "assistant", "content": response})
             with st.chat_message("assistant"): st.markdown(response)
-        else: # doc_qna
+        else: 
             with st.spinner("Searching database..."):
                 try:
                     collection = db_client.get_collection(name=agent_info["collection_name"])
@@ -261,8 +250,7 @@ def chat_ui():
                     with st.chat_message("assistant"): st.markdown(response_text)
                 except Exception as e: st.error(f"An error occurred while getting the response: {e}")
 
-# --- Main Application Logic ---
-st.set_page_config(page_title="Multi-Agent Document Platform", layout="centered") # Set to centered layout
+st.set_page_config(page_title="Multi-Agent Document Platform", layout="centered", page_icon="logo.png")
 st.title(" ◆ Multi-Agent Document Platform")
 
 ensure_encoder_exists("gem5_expert")

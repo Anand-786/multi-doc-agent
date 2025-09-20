@@ -1,29 +1,32 @@
 # Multi-Agent Document Platform
 
-A Streamlit application that allows users to chat with pre-built document agents or create their own custom agents by simply uploading a PDF file. Each agent is equipped with a bespoke, on-the-fly trained intent classifier to handle queries efficiently using a Retrieval-Augmented Generation (RAG) pipeline.
+A Streamlit application that allows users to chat with pre-built document agents or create their own custom agents by simply uploading a PDF file. Each agent is equipped with a trained intent classifier in real-time to handle queries efficiently using a Retrieval-Augmented Generation (RAG) pipeline.
 
 ---
 
 ## Key Features
 
 -   **Multi-Agent Architecture:** Start with pre-built agents (e.g., "gem5 Expert") and dynamically create new, custom agents for any PDF document.
--   **On-the-Fly Agent Creation:** Uploading a PDF automatically triggers a full machine learning pipeline that chunks the document, creates a vector database, synthetically generates a training dataset, and trains a unique intent classifier for that agent.
+
+-   **Real-time Agent Creation:** Uploading a PDF automatically triggers a full machine learning pipeline that chunks the document, creates a vector database, synthetically generates a training dataset, and trains a unique intent classifier for that agent.
+
 -   **Dynamic Intent Classification:** Each custom agent uses its own `LogisticRegression` classifier to distinguish between casual conversation and document-specific questions (`doc_qna`), ensuring resources are used efficiently.
--   **Advanced RAG Pipeline:** Leverages `SentenceTransformer` embeddings and a persistent `ChromaDB` vector store to retrieve the most relevant context from a document before passing it to the language model.
+
+-   **RAG Pipeline:** Leverages `SentenceTransformer` embeddings and a persistent `ChromaDB` vector store to retrieve the most relevant context from a document before passing it to the language model.
+
 -   **Source Attribution:** Responses for custom agents include the source page numbers, enhancing trust and verifiability.
 
 ---
 
 ## Application Workflow
 
-The application has two main workflows: creating a new agent and chatting with an existing one.
-
 ### 1. Agent Creation
 
 When a user uploads a new PDF, a 5-step process (visible via status toasts in the UI) creates a fully functional agent:
+
 1.  **Chunking:** The PDF is parsed, and its text is split into manageable chunks. A new `ChromaDB` collection is created to store the embeddings for these chunks.
 2.  **Data Generation:** Keywords are extracted from the text chunks using `YAKE`. These keywords are used to synthetically generate a list of relevant, document-specific questions, which will form the `doc_qna` portion of our training set.
-3.  **Dataset Assembly:** The generated `doc_qna` questions are combined with a predefined list of `casual` questions from `casual_queries.csv` to form a balanced training dataset.
+3.  **Dataset Assembly:** The generated `doc_qna` questions are combined with a predefined list of `casual` questions from `casual_queries.csv` to form a training dataset.
 4.  **Embedding Generation:** All training queries are converted into numerical vector embeddings using the `SentenceTransformer` model.
 5.  **Classifier Training:** A `LogisticRegression` model is trained on the embeddings. The final trained classifier and its corresponding `LabelEncoder` are saved as `.joblib` files, ready for use.
 
@@ -60,8 +63,8 @@ To run this application on your local machine, follow these steps.
 
 1.  **Clone the Repository**
     ```bash
-    git clone [YOUR_REPOSITORY_URL]
-    cd [YOUR_REPOSITORY_NAME]
+    git clone https://github.com/Anand-786/multi-doc-agent.git
+    cd multi-doc-agent
     ```
 
 2.  **Create and Activate a Virtual Environment**
@@ -82,7 +85,7 @@ To run this application on your local machine, follow these steps.
     ```
 
 5.  **Create the Casual Queries File**
-    Create a file named `casual_queries.csv` in the root directory with the following content:
+    Create a file named `casual_queries.csv` in the root directory with the entries like this:
     ```csv
     query,intent
     "Hello there!",casual
@@ -95,16 +98,5 @@ To run this application on your local machine, follow these steps.
 
 6.  **Run the Application**
     ```bash
-    streamlit run app_multi_agent.py
+    streamlit run src/app_multi_agent.py
     ```
-
----
-
-## Project Components
-
--   `app_multi_agent.py`: The main Streamlit application script.
--   `casual_queries.csv`: The data used for the 'casual' class in the intent classifier.
--   `intent_classifiers/`: The folder where trained `.joblib` models are stored.
--   `multi_agent_chroma_db/`: The folder where the `ChromaDB` vector stores are persisted.
--   `requirements.txt`: Python package dependencies.
--   `.env`: File for storing environment variables (e.g., API keys).
