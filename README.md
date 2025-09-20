@@ -30,7 +30,7 @@ When a user uploads a new PDF, a 5-step process (visible via status toasts in th
 4.  **Embedding Generation:** All training queries are converted into numerical vector embeddings using the `SentenceTransformer` model.
 5.  **Classifier Training:** A `LogisticRegression` model is trained on the embeddings. The final trained classifier and its corresponding `LabelEncoder` are saved as `.joblib` files, ready for use.
 
-<img src="ss_main.png" alt="Application Screenshot" width="80%">
+<img src="ss_main1.png" alt="Application Screenshot" width="80%">
 
 ### 2. Chatting with an Agent
 
@@ -42,7 +42,7 @@ When a user uploads a new PDF, a 5-step process (visible via status toasts in th
 4.  **Generation (RAG):** The retrieved chunks are formatted into a detailed prompt along with the original query. This is sent to the `gemini-1.5-flash` LLM, which generates an answer based strictly on the provided context.
 5.  **Display:** The final response, including source citations, is displayed in the chat interface.
 
-<img src="ss_pdf.png" alt="Application Screenshot" width="80%">
+<img src="ss_pdf1.png" alt="Application Screenshot" width="80%">
 
 ---
 
