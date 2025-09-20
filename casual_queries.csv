@@ -1,0 +1,112 @@
+query,intent
+"Hello there!",casual
+"Hey, how are you?",casual
+"What's up?",casual
+"Can you tell me a joke?",casual
+"What is your purpose?",casual
+"Thanks for the help",casual
+"Good morning",casual
+"That was useful, thanks",casual
+"Who created you?",casual
+"What other things can you do?",casual
+"See you later",casual
+"That's all for now",casual
+"How's the weather?",casual
+"Cool, I got it.",casual
+"You're a bot, right?",casual
+"Can you help me with my homework?",casual
+"Awesome!",casual
+"Goodbye",casual
+"I have a question",casual
+"Let's chat",casual
+"Hey there, can you help me?",casual
+"What is a Large Language Model?",casual
+"Explain how the RAG pattern works.",casual
+"What is a transformer architecture?",casual
+"Can you explain Dijkstra's algorithm?",casual
+"Good morning!",casual
+"What is a neural network?",casual
+"How does a Convolutional Neural Network work for images?",casual
+"Tell me about the quicksort algorithm.",casual
+"What's a hash table?",casual
+"Thanks, that was very helpful.",casual
+"What is the capital of India?",casual
+"Who are you?",casual
+"Can you write a Python function to reverse a string?",casual
+"That's incorrect.",casual
+"What is an agentic AI system?",casual
+"Okay, I understand.",casual
+"What are you capable of?",casual
+"How do you calculate a factorial?",casual
+"Explain the concept of recursion.",casual
+"What is object-oriented programming?",casual
+"That's all, thank you.",casual
+"What is a linked list data structure?",casual
+"Can you explain what an API is?",casual
+"Tell me about binary search.",casual
+"What is gradient descent?",casual
+"I have a general programming question.",casual
+"What's the time?",casual
+"Tell me a fun fact about computers.",casual
+"Explain the difference between supervised and unsupervised learning.",casual
+"What is a vector database?",casual
+"Who won the last FIFA World Cup?",casual
+"What is Moore's Law?",casual
+"Bye!",casual
+"How can I help improve your responses?",casual
+"Hi there!",casual
+"Good afternoon",casual
+"What's happening?",casual
+"How's it going?",casual
+"Nice to meet you",casual
+"Can you tell me something interesting?",casual
+"That's pretty cool",casual
+"I'm just browsing around",casual
+"What's new?",casual
+"Can you recommend a good book?",casual
+"Tell me about yourself",casual
+"What do you like to talk about?",casual
+"How's your day?",casual
+"That makes sense",casual
+"Interesting!",casual
+"I see",casual
+"Good evening",casual
+"Just checking in",casual
+"What are your hobbies?",casual
+"What's your favorite color?",casual
+"Do you have emotions?",casual
+"Can you dream?",casual
+"What makes you happy?",casual
+"Are you real?",casual
+"How smart are you?",casual
+"What languages do you speak?",casual
+"Can you learn new things?",casual
+"Do you get tired?",casual
+"What's the meaning of life?",casual
+"Can you feel pain?",casual
+"Do you have friends?",casual
+"What's your biggest fear?",casual
+"Can you get bored?",casual
+"How old are you?",casual
+"Where do you live?",casual
+"What's your favorite food?",casual
+"Can you sing?",casual
+"Do you believe in God?",casual
+"What's your opinion on AI?",casual
+"Can you fall in love?",casual
+"What are you thinking about?",casual
+"Do you have memories?",casual
+"Can you forget things?",casual
+"What is machine learning?",casual
+"How does the internet work?",casual
+"Can you explain blockchain?",casual
+"What is artificial intelligence?",casual
+"How do computers work?",casual
+"What is the cloud?",casual
+"What is cryptocurrency?",casual
+"What is virtual reality?",casual
+"How do search engines work?",casual
+"What is cybersecurity?",casual
+"Explain quantum computing",casual
+"What is big data?",casual
+"How does GPS work?",casual
