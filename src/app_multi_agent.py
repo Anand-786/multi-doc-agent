@@ -74,6 +74,7 @@ def ensure_encoder_exists(agent_name):
         time.sleep(2)
 
 def create_agent_with_intent_classifier(pdf_file, collection_name, client):
+    start_time = time.time()
     st.toast("➤ Step 1/5: Chunking document..."); time.sleep(2)
     try:
         pdf_bytes = pdf_file.read()
@@ -121,7 +122,10 @@ def create_agent_with_intent_classifier(pdf_file, collection_name, client):
     joblib.dump(classifier, classifier_path)
     joblib.dump(encoder, encoder_path)
     st.toast("✔ Classifier trained and saved!"); time.sleep(2)
+    end_time = time.time()
 
+    st.toast(f"✔ Time taken : {end_time - start_time:.2f} seconds!"); time.sleep(2)
+   
     agent_config = {
         "paths": {"classifier": classifier_path, "encoder": encoder_path},
         "metadata": {
